@@ -46,4 +46,19 @@ class OrderRestController(
             OrderResponse("주문 성공 (Atomic Update)"),
         )
     }
+
+    @PostMapping("/preoccupy")
+    fun orderWithRedis(
+        @RequestBody @Valid request: CreateOrderCommandRequest,
+    ): ResponseEntity<OrderResponse> {
+        createOrderUseCase.orderWithPreoccupy(
+            userId = request.userId,
+            productId = request.productId,
+            quantity = request.quantity,
+        )
+
+        return ResponseEntity.ok(
+            OrderResponse("주문 성공 (Preoccupy Update)"),
+        )
+    }
 }

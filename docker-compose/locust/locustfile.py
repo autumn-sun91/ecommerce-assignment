@@ -32,7 +32,8 @@ class ShopUser(HttpUser):
 
         elif TEST_MODE == "lock":
             endpoint = "/orders/lock"
-
+        elif TEST_MODE == "preoccupy":
+                    endpoint = "/orders/preoccupy"
         else:  # mixed
             endpoint = "/orders/atomic" if random.random() < 0.7 else "/orders/lock"
 

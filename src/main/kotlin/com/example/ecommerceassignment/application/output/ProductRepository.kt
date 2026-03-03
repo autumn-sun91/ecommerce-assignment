@@ -4,7 +4,7 @@ import com.example.ecommerceassignment.domain.Product
 
 interface ProductRepository {
     // X Lock
-    fun findByIdForUpdate(id: Long): Product?
+    fun getProductWithLock(id: Long): Product?
 
     fun save(product: Product)
 
@@ -13,4 +13,15 @@ interface ProductRepository {
         productId: Long,
         quantity: Int,
     ): Boolean
+
+    fun getOneById(productId: Long): Product?
+
+    fun initStock(
+        productId: Long,
+        stock: Int,
+    ): Boolean
+
+    fun getStock(productId: Long): Int
+
+    fun getAllStock(): List<Product>
 }

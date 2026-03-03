@@ -22,3 +22,24 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.MySQLDialect
     open-in-view: false
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      lettuce:
+        pool:
+          max-active: 10
+          max-idle: 5
+          min-idle: 2
+          max-wait: 1000ms
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    port: ${RABBITMQ_PORT}
+    username: ${RABBITMQ_USER}
+    password: ${RABBITMQ_PASS}
+
+order:
+  queue:
+    name: order.pending
+    exchange: order.exchange
+    routing-key: order.pending

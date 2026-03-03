@@ -9,4 +9,20 @@ interface OrderRepository {
         userId: Long,
         productId: Long,
     ): Int
+
+    fun executeOrderScript(
+        userId: Long,
+        productId: Long,
+        quantity: Int,
+        limit: Int = 2,
+    ): OrderScriptResult
+
+    fun getOneById(orderId: Long): Order?
+
+    enum class OrderScriptResult {
+        SUCCESS,
+        EXCEED_LIMIT,
+        OUT_OF_STOCK,
+        ERROR,
+    }
 }

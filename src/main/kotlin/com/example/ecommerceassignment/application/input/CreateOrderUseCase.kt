@@ -12,4 +12,10 @@ interface CreateOrderUseCase {
         productId: Long,
         quantity: Int,
     )
+
+    fun orderWithPreoccupy(
+        userId: Long,
+        productId: Long,
+        quantity: Int,
+    )
 }

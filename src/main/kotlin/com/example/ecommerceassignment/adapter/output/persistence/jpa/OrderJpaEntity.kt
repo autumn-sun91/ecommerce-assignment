@@ -1,11 +1,7 @@
 package com.example.ecommerceassignment.adapter.output.persistence.jpa
 
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
-import jakarta.persistence.Index
-import jakarta.persistence.Table
+import com.example.ecommerceassignment.domain.Order
+import jakarta.persistence.*
 
 @Entity
 @Table(
@@ -21,4 +17,6 @@ class OrderJpaEntity(
     val userId: Long,
     val productId: Long,
     val quantity: Int,
+    @Enumerated(EnumType.STRING)
+    val status: Order.OrderStatus,
 )
