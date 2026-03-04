@@ -59,13 +59,6 @@ class OrderPersistenceAdapter(
         val userKey = USER_ORDER_KEY.format(userId, productId)
         val stockKey = PRODUCT_STOCK_KEY.format(productId)
 
-        log.info("Lua Script 실행 - userKey: $userKey, stockKey: $stockKey, quantity: $quantity, limit: $limit")
-
-        // 실행 전 Redis 값 직접 확인
-        val stockBefore = redisTemplate.opsForValue().get(stockKey)
-        val userCountBefore = redisTemplate.opsForValue().get(userKey)
-        log.info("실행 전 stock: $stockBefore, userCount: $userCountBefore")
-
         return try {
             val result =
                 redisTemplate.execute(
@@ -75,14 +68,11 @@ class OrderPersistenceAdapter(
                     limit.toString(),
                 )
 
-            log.info("Lua Script 결과값: $result")
-
             when (result) {
                 1L -> OrderRepository.OrderScriptResult.SUCCESS
                 -1L -> OrderRepository.OrderScriptResult.EXCEED_LIMIT
                 -2L -> OrderRepository.OrderScriptResult.OUT_OF_STOCK
                 else -> {
-                    log.error("Lua Script 알 수 없는 결과값: $result")
                     OrderRepository.OrderScriptResult.ERROR
                 }
             }

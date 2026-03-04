@@ -1,44 +1,38 @@
 package com.example.ecommerceassignment.adapter.input.consumer
 
-import com.example.ecommerceassignment.application.output.OrderRepository
-import com.example.ecommerceassignment.application.output.ProductRepository
+import com.example.ecommerceassignment.application.input.port.DecreaseStockAndConfirmInputPort
 import com.example.ecommerceassignment.domain.event.OrderPendingEvent
+import org.redisson.api.RedissonClient
 import org.slf4j.LoggerFactory
 import org.springframework.amqp.rabbit.annotation.RabbitListener
 import org.springframework.stereotype.Component
-import org.springframework.transaction.annotation.Transactional
+import java.util.concurrent.TimeUnit
 
 @Component
 class OrderConsumer(
-    private val orderRepository: OrderRepository,
-    private val productRepository: ProductRepository,
+    private val decreaseStockAndConfirmInputPort: DecreaseStockAndConfirmInputPort,
+    private val redissonClient: RedissonClient,
 ) {
     private val log = LoggerFactory.getLogger(this::class.java)
 
     @RabbitListener(queues = ["\${order.queue.name}"])
-    @Transactional
     fun consume(event: OrderPendingEvent) {
-        log.info("OrderPendingEvent 수신 orderId=${event.orderId}")
+        val lockKey = "lock:product:${event.productId}"
+        val lock = redissonClient.getLock(lockKey)
+        log.info("분산락 획득 성공 orderId=${event.orderId}")
 
-        val product =
-            productRepository.getProductWithLock(event.productId)
-                ?: throw IllegalStateException("상품 없음")
-
-        if (product.remainingStock() < 0) {
-            log.error("DB 재고 부족 - productId: ${event.productId}, stock: ${product.remainingStock()}")
-            return
+        // 락 획득 시도 (waitTime: 5초, leaseTime: 3초)
+        if (!lock.tryLock(5, 3, TimeUnit.SECONDS)) {
+            log.error("분산락 획득 실패 orderId=${event.orderId}")
+            throw IllegalStateException("분산락 획득 실패")
         }
 
-        product.decrease(event.quantity)
-        productRepository.save(product)
-
-        // Order CONFIRMED 변경
-        val order =
-            orderRepository.getOneById(event.orderId)
-                ?: throw IllegalStateException("주문 없음")
-        order.confirm()
-        orderRepository.save(order)
-
-        log.info("주문 확정 완료 orderId=${event.orderId}")
+        try {
+            decreaseStockAndConfirmInputPort.decreaseStockAndConfirm(event)
+        } finally {
+            if (lock.isHeldByCurrentThread) {
+                lock.unlock()
+            }
+        }
     }
 }

@@ -11,12 +11,10 @@ class GlobalExceptionAdvice {
     private val log = LoggerFactory.getLogger(this::class.java)
 
     @ExceptionHandler(IllegalStateException::class)
-    fun handleBusinessException(e: IllegalStateException): ResponseEntity<Map<String, String>> {
-        log.warn("[ILLEGAL_STATE_ERROR] message: {}", e.message)
-        return ResponseEntity
+    fun handleBusinessException(e: IllegalStateException): ResponseEntity<Map<String, String>> =
+        ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
             .body(mapOf("error" to e.message.orEmpty()))
-    }
 
     @ExceptionHandler(Exception::class)
     fun handleException(e: Exception): ResponseEntity<Map<String, String>> {

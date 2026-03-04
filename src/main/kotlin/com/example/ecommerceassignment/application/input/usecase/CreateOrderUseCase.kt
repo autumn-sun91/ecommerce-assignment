@@ -1,4 +1,4 @@
-package com.example.ecommerceassignment.application.input
+package com.example.ecommerceassignment.application.input.usecase
 
 interface CreateOrderUseCase {
     fun orderWithLock(

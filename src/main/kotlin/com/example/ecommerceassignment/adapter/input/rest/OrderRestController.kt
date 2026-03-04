@@ -2,7 +2,7 @@ package com.example.ecommerceassignment.adapter.input.rest
 
 import com.example.ecommerceassignment.adapter.input.rest.dto.CreateOrderCommandRequest
 import com.example.ecommerceassignment.adapter.input.rest.dto.OrderResponse
-import com.example.ecommerceassignment.application.input.CreateOrderUseCase
+import com.example.ecommerceassignment.application.input.usecase.CreateOrderUseCase
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping

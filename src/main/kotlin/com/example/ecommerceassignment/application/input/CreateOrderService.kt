@@ -1,6 +1,7 @@
 package com.example.ecommerceassignment.application.input
 
 import com.example.ecommerceassignment.adapter.output.publisher.OrderEventPublisher
+import com.example.ecommerceassignment.application.input.usecase.CreateOrderUseCase
 import com.example.ecommerceassignment.application.output.OrderRepository
 import com.example.ecommerceassignment.application.output.ProductRepository
 import com.example.ecommerceassignment.domain.Order
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-class OrderService(
+class CreateOrderService(
     private val orderRepository: OrderRepository,
     private val productRepository: ProductRepository,
     private val orderEventPublisher: OrderEventPublisher,
