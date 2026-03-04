@@ -4,9 +4,11 @@ import com.example.ecommerceassignment.domain.event.OrderPendingEvent
 import org.slf4j.LoggerFactory
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
 @Component
+@Profile("producer")
 class OrderEventPublisher(
     private val rabbitTemplate: RabbitTemplate,
     @Value("\${order.queue.exchange}") private val exchange: String,

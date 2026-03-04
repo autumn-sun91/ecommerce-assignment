@@ -4,6 +4,7 @@ import com.example.ecommerceassignment.adapter.input.rest.dto.CreateOrderCommand
 import com.example.ecommerceassignment.adapter.input.rest.dto.OrderResponse
 import com.example.ecommerceassignment.application.input.CreateOrderUseCase
 import jakarta.validation.Valid
+import org.springframework.context.annotation.Profile
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/orders")
+@Profile("producer")
 class OrderRestController(
     private val createOrderUseCase: CreateOrderUseCase,
 ) {

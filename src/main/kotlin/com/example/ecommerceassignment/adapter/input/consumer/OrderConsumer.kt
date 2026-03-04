@@ -5,10 +5,12 @@ import com.example.ecommerceassignment.application.output.ProductRepository
 import com.example.ecommerceassignment.domain.event.OrderPendingEvent
 import org.slf4j.LoggerFactory
 import org.springframework.amqp.rabbit.annotation.RabbitListener
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
 @Component
+@Profile("consumer")
 class OrderConsumer(
     private val orderRepository: OrderRepository,
     private val productRepository: ProductRepository,
