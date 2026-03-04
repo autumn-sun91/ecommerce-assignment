@@ -5,10 +5,12 @@ import com.example.ecommerceassignment.domain.event.OrderPendingEvent
 import org.redisson.api.RedissonClient
 import org.slf4j.LoggerFactory
 import org.springframework.amqp.rabbit.annotation.RabbitListener
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 import java.util.concurrent.TimeUnit
 
 @Component
+@Profile("consumer")
 class OrderConsumer(
     private val decreaseStockAndConfirmInputPort: DecreaseStockAndConfirmInputPort,
     private val redissonClient: RedissonClient,

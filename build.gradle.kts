@@ -72,8 +72,9 @@ jib {
             listOf(
                 "-XX:+UseContainerSupport",
                 "-XX:MaxRAMPercentage=75.0",
+                "-XX:+UseG1GC", // G1GC → CPU 스파이크 완화
+                "-XX:MaxGCPauseMillis=200", // GC 최대 200ms
                 "-XX:+HeapDumpOnOutOfMemoryError",
-                "-Dspring.profiles.active=docker",
             )
         creationTime = "USE_CURRENT_TIMESTAMP"
     }

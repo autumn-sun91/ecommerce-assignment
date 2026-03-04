@@ -66,7 +66,7 @@ services:
     networks:
       - shop-network
 
-  app:
+  app-producer:
     image: shop-app:latest
     restart: always
     depends_on:
@@ -80,7 +80,31 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://shop-mysql:3306/shop?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF-8
       SPRING_DATASOURCE_USERNAME: shop
       SPRING_DATASOURCE_PASSWORD: shop
-      SPRING_PROFILES_ACTIVE: docker
+      SPRING_PROFILES_ACTIVE: producer
+      REDIS_HOST: shop-redis
+      REDIS_PORT: 6379
+      RABBITMQ_HOST: shop-rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: guest
+      RABBITMQ_PASS: guest
+    networks:
+      - shop-network
+
+  app-consumer:
+    image: shop-app:latest
+    restart: always
+    depends_on:
+      shop-mysql:
+        condition: service_healthy
+      shop-redis:
+        condition: service_healthy
+      shop-rabbitmq:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://shop-mysql:3306/shop?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: shop
+      SPRING_DATASOURCE_PASSWORD: shop
+      SPRING_PROFILES_ACTIVE: consumer
       REDIS_HOST: shop-redis
       REDIS_PORT: 6379
       RABBITMQ_HOST: shop-rabbitmq
@@ -94,7 +118,7 @@ services:
     image: nginx:latest
     container_name: shop-nginx
     depends_on:
-      - app
+      - app-producer
     ports:
       - "8080:80"
     volumes:
@@ -108,7 +132,7 @@ services:
     environment:
       TEST_MODE: preoccupy
     depends_on:
-      - app
+      - app-producer
     ports:
       - "8089:8089"
     volumes:

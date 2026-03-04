@@ -9,7 +9,7 @@ TEST_MODE = os.getenv("TEST_MODE", "mixed")
 
 class ShopUser(HttpUser):
 
-    wait_time = between(0.01, 0.2)
+    wait_time = between(0.01, 0.05)
 
     def on_start(self):
         if random.randint(1, 10) <= 3:

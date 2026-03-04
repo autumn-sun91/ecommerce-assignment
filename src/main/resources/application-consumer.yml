@@ -1,0 +1,16 @@
+# application-consumer.yml
+spring:
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    port: ${RABBITMQ_PORT}
+    username: ${RABBITMQ_USER}
+    password: ${RABBITMQ_PASS}
+    listener:
+      simple:
+        concurrency: 1
+        max-concurrency: 3
+        prefetch: 1          # 한번에 1개씩만 처리
+  datasource:
+    hikari:
+      maximum-pool-size: 10  # Consumer 는 커넥션 적게
+      minimum-idle: 3

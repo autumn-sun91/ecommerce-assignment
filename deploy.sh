@@ -12,10 +12,12 @@ PROJECT_NAME="shop"
 # ==============================
 # 기본 설정
 # ==============================
-SCALE=${1:-1}         # 첫 번째 인자: scale 개수 (default 1)
-LOG=${2:-false}       # 두 번째 인자: 로그 출력 여부
+PRODUCER_SCALE=${1:-2}   # 첫 번째 인자: producer scale (default 2)
+CONSUMER_SCALE=${2:-1}   # 두 번째 인자: consumer scale (default 1)
+LOG=${3:-false}          # 세 번째 인자: 로그 출력 여부
 
-echo "📦 Scale count: $SCALE"
+echo "📦 Producer scale: $PRODUCER_SCALE"
+echo "📦 Consumer scale: $CONSUMER_SCALE"
 
 # ==============================
 # Gradle Build + Jib Docker Build
@@ -35,7 +37,9 @@ docker-compose -p $PROJECT_NAME -f $COMPOSE_FILE down --remove-orphans --volumes
 # 새 컨테이너 실행 (scale 적용)
 # ==============================
 echo "🚀 Starting containers..."
-docker-compose -p $PROJECT_NAME -f $COMPOSE_FILE up -d --scale app=$SCALE
+docker-compose -p $PROJECT_NAME -f $COMPOSE_FILE up -d \
+    --scale app-producer=$PRODUCER_SCALE \
+    --scale app-consumer=$CONSUMER_SCALE
 
 echo "✅ Containers started"
 
@@ -50,7 +54,7 @@ docker ps
 # ==============================
 if [ "$LOG" = "true" ]; then
   echo "📜 Tailing logs..."
-  docker-compose -p $PROJECT_NAME -f $COMPOSE_FILE logs -f app
+  docker-compose -p $PROJECT_NAME -f $COMPOSE_FILE logs -f app-producer app-consumer
 fi
 
 echo "==============================="
