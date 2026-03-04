@@ -24,7 +24,7 @@ class OrderConsumer(
         log.info("분산락 획득 성공 orderId=${event.orderId}")
 
         // 락 획득 시도 (waitTime: 5초, leaseTime: 3초)
-        if (!lock.tryLock(5, 3, TimeUnit.SECONDS)) {
+        if (!lock.tryLock(2, 3, TimeUnit.SECONDS)) {
             log.error("분산락 획득 실패 orderId=${event.orderId}")
             throw IllegalStateException("분산락 획득 실패")
         }

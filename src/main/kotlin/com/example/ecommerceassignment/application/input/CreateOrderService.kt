@@ -18,6 +18,7 @@ class CreateOrderService(
     private val orderRepository: OrderRepository,
     private val productRepository: ProductRepository,
     private val orderEventPublisher: OrderEventPublisher,
+    private val orderSaveProcessor: OrderSaveProcessor,
 ) : CreateOrderUseCase {
     private val log = LoggerFactory.getLogger(this::class.java)
 
@@ -82,7 +83,6 @@ class CreateOrderService(
         )
     }
 
-    @Transactional
     override fun orderWithPreoccupy(
         userId: Long,
         productId: Long,
@@ -101,14 +101,7 @@ class CreateOrderService(
 
             // Redis 선점 성공 → DB에 주문 저장 (PENDING 상태)
             val order =
-                orderRepository.save(
-                    Order(
-                        userId = userId,
-                        productId = productId,
-                        quantity = quantity,
-                        status = Order.OrderStatus.PENDING,
-                    ),
-                )
+                orderSaveProcessor.save(userId, productId, quantity)
 
             orderEventPublisher.publish(
                 OrderPendingEvent(

@@ -4,10 +4,12 @@ import com.example.ecommerceassignment.application.output.OrderRepository
 import com.example.ecommerceassignment.application.output.ProductRepository
 import com.example.ecommerceassignment.domain.event.OrderPendingEvent
 import org.slf4j.LoggerFactory
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
+@Profile("consumer")
 class DecreaseStockConfirmService(
     private val productRepository: ProductRepository,
     private val orderRepository: OrderRepository,
