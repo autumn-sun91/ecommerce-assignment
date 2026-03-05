@@ -22,6 +22,16 @@ class RabbitMQConfig {
     @Value("\${order.queue.routing-key}")
     private lateinit var routingKey: String
 
+    // 신규 order.confirmed 설정
+    @Value("\${order.confirmed.queue}")
+    private lateinit var confirmedQueueName: String
+
+    @Value("\${order.confirmed.exchange}")
+    private lateinit var confirmedExchangeName: String
+
+    @Value("\${order.confirmed.routing-key}")
+    private lateinit var confirmedRoutingKey: String
+
     @Bean
     fun orderQueue(): Queue = Queue(queueName, true) // durable=true
 
@@ -29,11 +39,21 @@ class RabbitMQConfig {
     fun orderExchange(): DirectExchange = DirectExchange(exchangeName)
 
     @Bean
-    fun binding(): Binding =
+    fun orderBinding(): Binding =
         BindingBuilder
             .bind(orderQueue())
             .to(orderExchange())
             .with(routingKey)
+
+    @Bean fun confirmedQueue(): Queue = Queue(confirmedQueueName, true)
+
+    @Bean fun confirmedExchange(): DirectExchange = DirectExchange(confirmedExchangeName)
+
+    @Bean fun confirmedBinding(): Binding =
+        BindingBuilder
+            .bind(confirmedQueue())
+            .to(confirmedExchange())
+            .with(confirmedRoutingKey)
 
     @Bean
     fun messageConverter(): Jackson2JsonMessageConverter = Jackson2JsonMessageConverter()

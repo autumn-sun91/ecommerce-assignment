@@ -24,3 +24,19 @@ CREATE TABLE orders
 CREATE INDEX idx_orders_user_product ON orders (user_id, product_id);
 
 CREATE INDEX idx_orders_product ON orders (product_id);
+
+CREATE TABLE delivery_histories
+(
+    id               BIGINT AUTO_INCREMENT PRIMARY KEY,
+    order_id         BIGINT       NOT NULL UNIQUE,
+    idempotency_key  VARCHAR(255) NOT NULL,
+    status           VARCHAR(20)  NOT NULL DEFAULT 'UNKNOWN',
+    tracking_number  VARCHAR(255),
+    fail_reason      TEXT,
+    attempt_count    INT          NOT NULL DEFAULT 0,
+    created_at       DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at       DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    INDEX idx_status (status),
+    INDEX idx_order_id (order_id)
+);

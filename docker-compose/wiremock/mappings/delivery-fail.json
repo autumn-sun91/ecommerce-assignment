@@ -1,0 +1,23 @@
+{
+  "mappings": [
+    {
+      "name": "delivery-fail",
+      "request": {
+        "method": "POST",
+        "url": "/deliveries/fail"
+      },
+      "response": {
+        "status": 500,
+        "delayDistribution": {
+          "type": "uniform",
+          "lower": 0,
+          "upper": 3000
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": "{\"success\": false, \"trackingNumber\": null, \"reason\": \"배송 서버 오류\"}"
+      }
+    }
+  ]
+}

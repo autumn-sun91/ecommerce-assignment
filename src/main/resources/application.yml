@@ -1,4 +1,12 @@
 spring:
+  cloud:
+    openfeign:
+      client:
+        config:
+          deliveryApi:
+            url: ${DELIVERY_API_URL}
+            connect-timeout: 1000
+            read-timeout: 3000
   application:
     name: ecommerce-assignment
   datasource:
@@ -33,8 +41,44 @@ spring:
           min-idle: 2
           max-wait: 1000ms
 
+resilience4j:
+  circuitbreaker:
+    instances:
+      deliveryApi:
+        sliding-window-size: 10
+        failure-rate-threshold: 50        # 50% 실패 시 OPEN
+        wait-duration-in-open-state: 10s  # 10초 후 HALF_OPEN
+        permitted-number-of-calls-in-half-open-state: 3
+        record-exceptions:
+          - java.io.IOException
+          - java.util.concurrent.TimeoutException
+          - java.net.ConnectException
+          - java.net.UnknownHostException
+          - java.net.SocketTimeoutException
+          - feign.RetryableException
+  retry:
+    instances:
+      deliveryApi:
+        max-attempts: 3                   # 최대 3번 시도
+        wait-duration: 1s                 # 초기 대기 1초
+        enable-exponential-backoff: true
+        exponential-backoff-multiplier: 3 # 1초 → 3초 → 9초
+        retry-exceptions:
+          - java.io.IOException
+          - java.util.concurrent.TimeoutException
+          - java.net.ConnectException
+          - java.net.UnknownHostException
+          - java.net.SocketTimeoutException
+          - feign.RetryableException
+        ignore-exceptions:
+          - com.example.ecommerceassignment.exception.DeliveryBadRequestException
+
 order:
   queue:
     name: order.pending
     exchange: order.exchange
     routing-key: order.pending
+  confirmed:
+    queue: order.confirmed
+    exchange: order.confirmed.exchange
+    routing-key: order.confirmed

@@ -1,0 +1,24 @@
+{
+  "mappings": [
+    {
+      "name": "delivery-success",
+      "request": {
+        "method": "POST",
+        "url": "/deliveries"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "delayDistribution": {
+          "type": "uniform",
+          "lower": 0,
+          "upper": 3000
+        },
+        "body": "{\"success\": true, \"trackingNumber\": \"TRACK-{{randomValue type='ALPHANUMERIC' length=8}}\", \"reason\": null}",
+        "transformers": ["response-template"]
+      }
+    }
+  ]
+}
