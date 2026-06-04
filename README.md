@@ -1,1 +1,1 @@
-# ecommerce-assignment
+# ecommerce-practice
